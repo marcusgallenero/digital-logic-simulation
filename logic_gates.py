@@ -1,63 +1,61 @@
-# Marcus Gallenero
-# 25' Winter Break SDS
+# Marcus Gallenero 
 # Digital Logic Design & OOP
 
-#-----Class Definition------#
 
+#-----Class Definition------#
 class LogicGate:
-    def __init__(self, label):
-        """
-        Initialize instance attributes
-        """
+    """
+    Base class for all logic gates.
+
+    Attributes:
+        label (str): Readable name of the gate
+    """
+
+    def __init__(self, label: str):
+        """Initialize instance attributes"""
         self.label = label
-        
-    def get_label(self):
-        """
-        Return name of the gate
-        """
+ 
+    def get_label(self) -> str:
+        """Return name of the gate"""
         return self.label
     
     def perform_logic_gate(self):
-        """
-        Placeholder - Specific gates will replace this with their logic
-        """
-        raise NotImplementedError('Must Implement Logic for this Gate!')
+        """Perform the logic operation of the gate (implemented in subclasses)"""
+        raise NotImplementedError('Must Implement Logic for this Gate.')
     
 
 class AndGate(LogicGate):
-    def __init__(self, label):
-        # Calls Parent __init__ to set label
-        super().__init__(label)
-    
-    def perform_logic_gate(self, a: bool, b: bool):
+    """Logic gate that performs the AND opertaion"""
+
+    def perform_logic_gate(self, a: bool, b: bool) -> int: 
         """
-        If both a and b are 1, return 1. Otherwise return 0
+        Returns 1 if both inputs are 1. Otherwise return 0
         """
         if a == 1 and b == 1:
             return 1
         else: 
             return 0
 
+
 class OrGate(LogicGate):
-    def __init__(self, label):
-        super().__init__(label)
-    
-    def perform_logic_gate(self, a: bool, b: bool):
+    """Logic gate that performs the OR operation"""
+
+    def perform_logic_gate(self, a: bool, b: bool) -> int:
         """
-        If a or b is 1, return 1. Else return 0
+        Return 1 if either input is 1. Otherwise return 0
         """
         if a == 1 or b == 1:
             return 1
         else:
             return 0
 
+
 class NotGate(LogicGate):
-    def __init__(self, label):
-        super().__init__(label)
+    """Logic gate that performs the NOT operation"""
     
-    def perform_logic_gate(self, a: bool):
+    def perform_logic_gate(self, a: bool) -> int:
         """
-        Return 1 if a is 0; Retrun 0 if a is 1
+        Return the logical inverse of an input
         """
         if a == 1:
             return 0
@@ -65,22 +63,22 @@ class NotGate(LogicGate):
             return 1
         
 class XorGate(LogicGate):
-    def __init__(self, label):
+    """Logic gate that performs the XOR operation"""
+
+    def __init__(self, label: str):
+        """Initialize internal gates used to compute XOR"""
+
         super().__init__(label)
-
-        # Instantiation: Use relationships between other classes
-        # Formula: (a OR b) AND (NOT (a AND b))
-
         self.or_gate = OrGate('Internal_OR')
         self.outer_and_gate = AndGate('Internal_AND_outer')
         self.not_gate = NotGate('Internal_NOT')
         self.inner_and_gate = AndGate('Internal_AND_inner')
     
-    def perform_logic_gate(self, a: bool, b: bool):
+    def perform_logic_gate(self, a: bool, b: bool) -> int:
         """
-        Return 1 if, and only if a and b are different
+        Return 1 if inputs differ. Otherwise return 0
         """
-        # Pass inputs into corresponding gates
+        
         or_result = self.or_gate.perform_logic_gate(a, b)
         inner_result = self.inner_and_gate.perform_logic_gate(a, b)
         not_result = self.not_gate.perform_logic_gate(inner_result)
@@ -90,13 +88,24 @@ class XorGate(LogicGate):
     
 
 class HalfAdder:
-    def __init__(self, label):
-        self.label = label
+    """
+    Half adder circuit implementation
 
+    Computes the sum and carry of two input bits
+    """
+
+    def __init__(self, label: str):
+        self.label = label
         self.xor_gate = XorGate('Sum')
         self.and_gate = AndGate('Carry')
 
-    def perform_calculation(self, a, b):
+    def perform_calculation(self, a: bool, b: bool) -> tuple[int, int]:
+        """
+        Compute the sum and carry bits for two input bits
+
+        Returns:
+            tuple[int, int]: (sum_bit, carry_bit)
+        """
 
         #If A xor B = 1, Sum = 1
         sum_bit = self.xor_gate.perform_logic_gate(a, b)
@@ -105,7 +114,8 @@ class HalfAdder:
         carry_bit = self.and_gate.perform_logic_gate(a, b)
 
         return sum_bit, carry_bit
-   
+
+        
 #-------Testing-------#
 
 if __name__ == "__main__":
