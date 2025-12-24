@@ -37,6 +37,7 @@ class FullAdder:
 
         return final_sum, final_carry
 
+#-------Testing------#
 
 if __name__ == "__main__":
 
